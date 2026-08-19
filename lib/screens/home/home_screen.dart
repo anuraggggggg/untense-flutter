@@ -7,7 +7,9 @@ import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../models/counsellor.dart';
 import '../../models/dashboard_models.dart';
+import '../../providers/counsellor_provider.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../widgets/common_widgets.dart';
 import '../dashboard/widgets/dashboard_widgets.dart';
@@ -26,6 +28,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mood = context.watch<DashboardProvider>().selectedMood;
+    final counsellors = context.watch<CounsellorProvider>().counsellors;
     final upcoming = DashboardContent.sessions
         .where((s) => s.status == SessionStatus.upcoming)
         .toList();
@@ -117,14 +120,15 @@ class HomeScreen extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  itemCount: DashboardContent.featuredExperts.length,
+                  itemCount: counsellors.length,
                   separatorBuilder: (_, index) => SizedBox(width: 12.w),
                   itemBuilder: (context, index) {
-                    final expert = DashboardContent.featuredExperts[index];
-                    return ExpertCard(
-                      expert: expert,
-                      compact: true,
-                      onTap: () => context.go(AppRoutes.experts),
+                    final counsellor = counsellors[index];
+                    return _HomeCounsellorCard(
+                      counsellor: counsellor,
+                      onTap: () => context.push(
+                        AppRoutes.counsellorDetailPath(counsellor.id),
+                      ),
                     )
                         .animate()
                         .fadeIn(
@@ -320,3 +324,130 @@ class _MoodChip extends StatelessWidget {
     );
   }
 }
+
+class _HomeCounsellorCard extends StatelessWidget {
+  const _HomeCounsellorCard({
+    required this.counsellor,
+    required this.onTap,
+  });
+
+  final Counsellor counsellor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SoftCard(
+      onTap: onTap,
+      padding: EdgeInsets.all(14.w),
+      child: SizedBox(
+        width: 210.w,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 48.w,
+                  height: 48.w,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.brandGradient,
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: counsellor.profileImage.isNotEmpty
+                      ? Image.network(
+                          counsellor.profileImage,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Center(
+                            child: Text(
+                              counsellor.fullName.characters.first,
+                              style: AppTextStyles.labelLarge.copyWith(
+                                color: AppColors.textOnPrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            counsellor.fullName.characters.first,
+                            style: AppTextStyles.labelLarge.copyWith(
+                              color: AppColors.textOnPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                ),
+                if (counsellor.availableNow)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 12.w,
+                      height: 12.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.surface, width: 2),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    counsellor.fullName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.labelMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    counsellor.professionalTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  SizedBox(height: 6.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.star_rounded,
+                        size: 14.sp,
+                        color: const Color(0xFFF5B942),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        '${counsellor.rating}',
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      Text(
+                        '₹${counsellor.startingPrice.toInt()}',
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

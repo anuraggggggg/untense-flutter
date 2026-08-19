@@ -65,7 +65,11 @@ class ExpertCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Avatar(name: expert.name, available: expert.available),
+            _Avatar(
+              name: expert.name,
+              available: expert.available,
+              imageUrl: expert.profileImage,
+            ),
             SizedBox(width: 12.w),
             Expanded(
               child: Column(
@@ -148,10 +152,11 @@ class ExpertCard extends StatelessWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({required this.name, required this.available});
+  const _Avatar({required this.name, required this.available, this.imageUrl});
 
   final String name;
   final bool available;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -164,13 +169,30 @@ class _Avatar extends StatelessWidget {
             gradient: AppColors.brandGradient,
             borderRadius: BorderRadius.circular(16.r),
           ),
-          alignment: Alignment.center,
-          child: Text(
-            name.isNotEmpty ? name.characters.first : '?',
-            style: AppTextStyles.labelLarge.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          clipBehavior: Clip.antiAlias,
+          child: imageUrl != null && imageUrl!.isNotEmpty
+              ? Image.network(
+                  imageUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Center(
+                    child: Text(
+                      name.isNotEmpty ? name.characters.first : '?',
+                      style: AppTextStyles.labelLarge.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    name.isNotEmpty ? name.characters.first : '?',
+                    style: AppTextStyles.labelLarge.copyWith(
+                      color: AppColors.textOnPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
         ),
         if (available)
           Positioned(

@@ -8,6 +8,7 @@ class ExpertSummary {
     required this.sessions,
     required this.tags,
     required this.available,
+    this.profileImage = '',
   });
 
   final String id;
@@ -17,6 +18,7 @@ class ExpertSummary {
   final int sessions;
   final List<String> tags;
   final bool available;
+  final String profileImage;
 }
 
 /// Upcoming / past session summary.
@@ -61,6 +63,8 @@ abstract final class DashboardContent {
       sessions: 320,
       tags: ['Anxiety', 'Burnout'],
       available: true,
+      profileImage:
+          'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
     ),
     ExpertSummary(
       id: '2',
@@ -70,6 +74,8 @@ abstract final class DashboardContent {
       sessions: 210,
       tags: ['Career', 'Confidence'],
       available: true,
+      profileImage:
+          'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
     ),
     ExpertSummary(
       id: '3',
@@ -79,6 +85,8 @@ abstract final class DashboardContent {
       sessions: 410,
       tags: ['Relationships', 'Self-worth'],
       available: false,
+      profileImage:
+          'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=400&q=80',
     ),
     ExpertSummary(
       id: '4',
@@ -88,6 +96,8 @@ abstract final class DashboardContent {
       sessions: 180,
       tags: ['Purpose', 'Habits'],
       available: true,
+      profileImage:
+          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     ),
   ];
 

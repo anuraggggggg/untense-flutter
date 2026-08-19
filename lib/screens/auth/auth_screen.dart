@@ -2,21 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../providers/auth_provider.dart';
 import '../../widgets/common_widgets.dart';
 
-/// Placeholder auth entry — wired for post-onboarding navigation.
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  final TextEditingController _emailController =
+      TextEditingController(text: 'user@gmail.com');
+  final TextEditingController _passwordController =
+      TextEditingController(text: 'admin@123');
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final auth = context.read<AuthProvider>();
+    final success = await auth.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      context.go(AppRoutes.home);
+    } else {
+      setState(() {
+        _errorMessage = 'Invalid email or password';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AmbientBackground(
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 28.w),
             child: Column(
               children: [
@@ -53,22 +101,46 @@ class AuthScreen extends StatelessWidget {
                 )
                     .animate()
                     .fadeIn(delay: 180.ms, duration: 450.ms),
-                const Spacer(),
-                PrimaryButton(
-                  label: 'Continue with Email',
-                  onPressed: () => context.go(AppRoutes.home),
-                )
-                    .animate()
-                    .fadeIn(delay: 260.ms, duration: 400.ms)
-                    .slideY(begin: 0.1, end: 0, delay: 260.ms),
-                SizedBox(height: 12.h),
-                SoftButton(
-                  label: 'Continue as Guest',
-                  onPressed: () => context.go(AppRoutes.home),
-                )
-                    .animate()
-                    .fadeIn(delay: 320.ms, duration: 400.ms),
-                SizedBox(height: 16.h),
+                SizedBox(height: 32.h),
+                // Form section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        labelText: 'Email Address',
+                        prefixIcon: Icon(Icons.email_outlined),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: Icon(Icons.lock_outline),
+                      ),
+                    ),
+                    if (_errorMessage != null) ...[
+                      SizedBox(height: 12.h),
+                      Text(
+                        _errorMessage!,
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.error,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    SizedBox(height: 24.h),
+                    PrimaryButton(
+                      label: _isLoading ? 'Signing in...' : 'Sign In',
+                      onPressed: _isLoading ? null : _handleLogin,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.h),
                 Text(
                   'By continuing, you agree to our Terms & Privacy Policy.',
                   textAlign: TextAlign.center,
@@ -83,3 +155,4 @@ class AuthScreen extends StatelessWidget {
     );
   }
 }
+

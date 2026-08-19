@@ -7,17 +7,18 @@ import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../providers/onboarding_provider.dart';
 import '../../widgets/common_widgets.dart';
+
+import '../../providers/auth_provider.dart';
 
 /// Profile tab inside the dashboard shell.
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  Future<void> _replayOnboarding(BuildContext context) async {
-    await context.read<OnboardingProvider>().resetOnboarding();
+  Future<void> _logout(BuildContext context) async {
+    await context.read<AuthProvider>().logout();
     if (!context.mounted) return;
-    context.go(AppRoutes.onboarding);
+    context.go(AppRoutes.auth);
   }
 
   @override
@@ -52,12 +53,12 @@ class ProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Guest User',
+                          'user@gmail.com',
                           style: AppTextStyles.headlineSmall,
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          'Your journey starts here',
+                          'Dev User',
                           style: AppTextStyles.bodySmall,
                         ),
                       ],
@@ -96,8 +97,8 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 28.h),
             SoftButton(
-              label: 'Replay Onboarding',
-              onPressed: () => _replayOnboarding(context),
+              label: 'Log Out',
+              onPressed: () => _logout(context),
             ),
             SizedBox(height: 12.h),
             Text(

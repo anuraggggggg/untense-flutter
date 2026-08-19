@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/app_colors.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../models/dashboard_models.dart';
+import '../../providers/counsellor_provider.dart';
 import '../../widgets/common_widgets.dart';
-import '../dashboard/widgets/dashboard_widgets.dart';
+import '../../widgets/counsellor_card.dart';
 
 /// Experts tab — discover trusted professionals.
 class ExpertsScreen extends StatefulWidget {
@@ -17,15 +20,6 @@ class ExpertsScreen extends StatefulWidget {
 }
 
 class _ExpertsScreenState extends State<ExpertsScreen> {
-  static const _filters = [
-    'All',
-    'Psychologist',
-    'Therapist',
-    'Coach',
-    'Mentor',
-  ];
-
-  String _selected = 'All';
   final _searchController = TextEditingController();
 
   @override
@@ -34,22 +28,10 @@ class _ExpertsScreenState extends State<ExpertsScreen> {
     super.dispose();
   }
 
-  List<ExpertSummary> get _filtered {
-    final query = _searchController.text.trim().toLowerCase();
-    return DashboardContent.featuredExperts.where((e) {
-      final matchesFilter = _selected == 'All' ||
-          e.role.toLowerCase().contains(_selected.toLowerCase());
-      final matchesQuery = query.isEmpty ||
-          e.name.toLowerCase().contains(query) ||
-          e.role.toLowerCase().contains(query) ||
-          e.tags.any((t) => t.toLowerCase().contains(query));
-      return matchesFilter && matchesQuery;
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final experts = _filtered;
+    final provider = context.watch<CounsellorProvider>();
+    final counsellors = provider.filteredCounsellors;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -68,7 +50,7 @@ class _ExpertsScreenState extends State<ExpertsScreen> {
                       .fadeIn(duration: 350.ms),
                   SizedBox(height: 6.h),
                   Text(
-                    'Psychologists, therapists, coaches & mentors.',
+                    'Psychologists, therapists, counsellors & coaches.',
                     style: AppTextStyles.bodyMedium,
                   ),
                   SizedBox(height: 18.h),
@@ -79,7 +61,7 @@ class _ExpertsScreenState extends State<ExpertsScreen> {
                     ),
                     child: TextField(
                       controller: _searchController,
-                      onChanged: (_) => setState(() {}),
+                      onChanged: (val) => provider.setSearchQuery(val),
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textPrimary,
                       ),
@@ -106,13 +88,13 @@ class _ExpertsScreenState extends State<ExpertsScreen> {
                     height: 36.h,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _filters.length,
+                      itemCount: provider.categories.length,
                       separatorBuilder: (_, index) => SizedBox(width: 8.w),
                       itemBuilder: (context, index) {
-                        final filter = _filters[index];
-                        final selected = filter == _selected;
+                        final filter = provider.categories[index];
+                        final selected = filter == provider.selectedCategory;
                         return GestureDetector(
-                          onTap: () => setState(() => _selected = filter),
+                          onTap: () => provider.setSelectedCategory(filter),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 220),
                             padding: EdgeInsets.symmetric(horizontal: 14.w),
@@ -147,32 +129,43 @@ class _ExpertsScreenState extends State<ExpertsScreen> {
             ),
             SizedBox(height: 16.h),
             Expanded(
-              child: experts.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No experts match your search.',
-                        style: AppTextStyles.bodyMedium,
-                      ),
-                    )
-                  : ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 120.h),
-                      itemCount: experts.length,
-                      separatorBuilder: (_, index) => SizedBox(height: 12.h),
-                      itemBuilder: (context, index) {
-                        return ExpertCard(expert: experts[index])
-                            .animate()
-                            .fadeIn(
-                              delay: (60 * index).ms,
-                              duration: 350.ms,
+              child: provider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : counsellors.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No counsellors match your search.',
+                            style: AppTextStyles.bodyMedium,
+                          ),
+                        )
+                      : ListView.separated(
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 120.h),
+                          itemCount: counsellors.length,
+                          separatorBuilder: (_, index) =>
+                              SizedBox(height: 12.h),
+                          itemBuilder: (context, index) {
+                            final counsellor = counsellors[index];
+                            return CounsellorCard(
+                              counsellor: counsellor,
+                              onViewProfile: () {
+                                context.push(
+                                  AppRoutes.counsellorDetailPath(counsellor.id),
+                                );
+                              },
                             )
-                            .slideY(
-                              begin: 0.06,
-                              end: 0,
-                              delay: (60 * index).ms,
-                            );
-                      },
-                    ),
+                                .animate()
+                                .fadeIn(
+                                  delay: (60 * index).ms,
+                                  duration: 350.ms,
+                                )
+                                .slideY(
+                                  begin: 0.06,
+                                  end: 0,
+                                  delay: (60 * index).ms,
+                                );
+                          },
+                        ),
             ),
           ],
         ),
@@ -180,3 +173,4 @@ class _ExpertsScreenState extends State<ExpertsScreen> {
     );
   }
 }
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../screens/auth/auth_screen.dart';
+import '../../global/auth_global.dart';
 import '../../screens/dashboard/dashboard_shell.dart';
 import '../../screens/experts/experts_screen.dart';
 import '../../screens/home/home_screen.dart';
@@ -9,6 +10,7 @@ import '../../screens/onboarding/onboarding_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/sessions/sessions_screen.dart';
 import '../../screens/splash/splash_screen.dart';
+import '../../screens/experts/counsellor_detail_screen.dart';
 import '../constants/app_constants.dart';
 
 /// Central GoRouter configuration for UnTense.
@@ -20,6 +22,20 @@ abstract final class AppRouter {
     navigatorKey: navigatorKey,
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: false,
+    refreshListenable: authProvider,
+    redirect: (context, state) {
+      final isLoggedIn = authProvider.isLoggedIn;
+      final location = state.matchedLocation;
+      // If not logged in, redirect to auth unless already on auth, splash, or onboarding
+      if (!isLoggedIn && location != AppRoutes.auth && location != AppRoutes.splash && location != AppRoutes.onboarding) {
+        return AppRoutes.auth;
+      }
+      // If logged in and trying to access login or splash or onboarding, redirect to home
+      if (isLoggedIn && (location == AppRoutes.auth || location == AppRoutes.splash || location == AppRoutes.onboarding)) {
+        return AppRoutes.home;
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -62,6 +78,14 @@ abstract final class AppRouter {
             );
           },
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.counsellorDetail,
+        name: 'counsellorDetail',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CounsellorDetailScreen(counsellorId: id);
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
