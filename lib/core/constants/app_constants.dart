@@ -40,6 +40,7 @@ abstract final class AppRoutes {
   static const String experts = '/experts';
   static const String sessions = '/sessions';
   static const String profile = '/profile';
+  static const String wallet = '/wallet';
   static const String counsellorDetail = '/experts/:id';
   static String counsellorDetailPath(String id) => '/experts/$id';
 }

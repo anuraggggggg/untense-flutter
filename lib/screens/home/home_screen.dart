@@ -11,7 +11,9 @@ import '../../models/counsellor.dart';
 import '../../models/dashboard_models.dart';
 import '../../providers/counsellor_provider.dart';
 import '../../providers/dashboard_provider.dart';
+import '../../providers/wallet_provider.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/quotes_banner.dart';
 import '../dashboard/widgets/dashboard_widgets.dart';
 
 /// Home tab — calm daily dashboard.
@@ -50,11 +52,16 @@ class HomeScreen extends StatelessWidget {
                         .animate()
                         .fadeIn(duration: 400.ms)
                         .slideY(begin: 0.08, end: 0),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 20.h),
+                    const QuotesBanner()
+                        .animate()
+                        .fadeIn(delay: 50.ms, duration: 400.ms)
+                        .slideY(begin: 0.08, end: 0, delay: 50.ms),
+                    SizedBox(height: 20.h),
                     _MoodCheckIn(selected: mood)
                         .animate()
-                        .fadeIn(delay: 80.ms, duration: 400.ms)
-                        .slideY(begin: 0.08, end: 0, delay: 80.ms),
+                        .fadeIn(delay: 100.ms, duration: 400.ms)
+                        .slideY(begin: 0.08, end: 0, delay: 100.ms),
                     SizedBox(height: 24.h),
                     Text('How can we help?', style: AppTextStyles.headlineSmall),
                     SizedBox(height: 14.h),
@@ -203,6 +210,11 @@ class _HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final walletBalance = context.watch<WalletProvider>().balance;
+    final formattedBalance = walletBalance % 1 == 0
+        ? '₹${walletBalance.toInt()}'
+        : '₹${walletBalance.toStringAsFixed(1)}';
+
     return Row(
       children: [
         Expanded(
@@ -220,6 +232,38 @@ class _HomeHeader extends StatelessWidget {
             ],
           ),
         ),
+        GestureDetector(
+          onTap: () => context.push(AppRoutes.wallet),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D9488).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: const Color(0xFF0D9488).withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.account_balance_wallet_rounded,
+                  color: const Color(0xFF0D9488),
+                  size: 18.sp,
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  formattedBalance,
+                  style: AppTextStyles.labelMedium.copyWith(
+                    color: const Color(0xFF0D9488),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(width: 10.w),
         Image.asset(
           AppConstants.logoPath,
           height: 44.h,

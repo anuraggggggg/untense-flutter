@@ -8,6 +8,7 @@ import 'core/theme/theme.dart';
 import 'providers/counsellor_provider.dart';
 import 'providers/dashboard_provider.dart';
 import 'providers/onboarding_provider.dart';
+import 'providers/wallet_provider.dart';
 import 'global/auth_global.dart';
 
 void main() {
@@ -31,6 +32,7 @@ class UnTenseApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OnboardingProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => CounsellorProvider()..fetchCounsellors()),
+        ChangeNotifierProvider(create: (_) => WalletProvider()),
         ChangeNotifierProvider.value(value: authProvider),
       ],
       child: ScreenUtilInit(

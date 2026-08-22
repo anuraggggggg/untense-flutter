@@ -11,6 +11,7 @@ import '../../screens/profile/profile_screen.dart';
 import '../../screens/sessions/sessions_screen.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/experts/counsellor_detail_screen.dart';
+import '../../screens/wallet/wallet_screen.dart';
 import '../constants/app_constants.dart';
 
 /// Central GoRouter configuration for UnTense.
@@ -86,6 +87,11 @@ abstract final class AppRouter {
           final id = state.pathParameters['id'] ?? '';
           return CounsellorDetailScreen(counsellorId: id);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.wallet,
+        name: 'wallet',
+        builder: (context, state) => const WalletScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
