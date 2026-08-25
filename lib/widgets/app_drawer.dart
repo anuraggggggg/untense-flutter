@@ -224,46 +224,58 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
 
-            // ── Logout Section ─────────────────────────────────────────
+            // ── Logout & Version Section ───────────────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
-              child: InkWell(
-                onTap: () async {
-                  Navigator.pop(context);
-                  await context.read<AuthProvider>().logout();
-                  if (context.mounted) {
-                    context.go(AppRoutes.auth);
-                  }
-                },
-                borderRadius: BorderRadius.circular(14.r),
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.08),
+              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await context.read<AuthProvider>().logout();
+                      if (context.mounted) {
+                        context.go(AppRoutes.auth);
+                      }
+                    },
                     borderRadius: BorderRadius.circular(14.r),
-                    border: Border.all(
-                      color: Colors.red.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.logout_rounded,
-                        color: Colors.red.shade600,
-                        size: 20.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'Sign Out',
-                        style: AppTextStyles.labelMedium.copyWith(
-                          color: Colors.red.shade600,
-                          fontWeight: FontWeight.w600,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.w, vertical: 12.h),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(14.r),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.2),
                         ),
                       ),
-                    ],
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.logout_rounded,
+                            color: Colors.red.shade600,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Text(
+                            'Sign Out',
+                            style: AppTextStyles.labelMedium.copyWith(
+                              color: Colors.red.shade600,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    'UnTense v1.0.0 • Calm & Mindful Wellness',
+                    style: AppTextStyles.labelSmall.copyWith(
+                      color: AppColors.textMuted.withValues(alpha: 0.6),
+                      fontSize: 10.sp,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
