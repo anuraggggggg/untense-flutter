@@ -3,7 +3,7 @@ import 'package:flutter/animation.dart';
 /// App-wide constants for UnTense.
 abstract final class AppConstants {
   static const String appName = 'UnTense';
-  static const String logoPath = 'assets/images/untense_logo.jpg';
+  static const String logoPath = 'assets/logo.png';
 
   // ── Spacing ────────────────────────────────────────────
   static const double spacingXs = 4;

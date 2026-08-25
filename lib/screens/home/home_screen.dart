@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/app_colors.dart';
@@ -22,9 +23,10 @@ class HomeScreen extends StatelessWidget {
 
   String get _greeting {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour >= 5 && hour < 12) return 'Good morning';
+    if (hour >= 12 && hour < 17) return 'Good afternoon';
+    if (hour >= 17 && hour < 22) return 'Good evening';
+    return 'Good night';
   }
 
   @override
@@ -210,64 +212,105 @@ class _HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final walletBalance = context.watch<WalletProvider>().balance;
     final formattedBalance = walletBalance % 1 == 0
         ? '₹${walletBalance.toInt()}'
         : '₹${walletBalance.toStringAsFixed(1)}';
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        // ── App Bar matching mockup ─────────────────────────────
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$greeting,',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textMuted,
+              // Hamburger menu button
+              Builder(
+                builder: (ctx) => GestureDetector(
+                  onTap: () {
+                    Scaffold.of(ctx).openDrawer();
+                  },
+                  child: Icon(
+                    Icons.menu_rounded,
+                    size: 26.sp,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
                 ),
               ),
-              SizedBox(height: 2.h),
-              Text('Welcome back', style: AppTextStyles.headlineLarge),
+
+              // Center Logo + Brand Title
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    AppConstants.logoPath,
+                    height: 32.h,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Untensed',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.4,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Right Wallet button
+              GestureDetector(
+                onTap: () => context.push(AppRoutes.wallet),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.account_balance_wallet_outlined,
+                      size: 24.sp,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      formattedBalance,
+                      style: AppTextStyles.labelSmall.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white70 : AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
-        GestureDetector(
-          onTap: () => context.push(AppRoutes.wallet),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0D9488).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(
-                color: const Color(0xFF0D9488).withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.account_balance_wallet_rounded,
-                  color: const Color(0xFF0D9488),
-                  size: 18.sp,
-                ),
-                SizedBox(width: 6.w),
-                Text(
-                  formattedBalance,
-                  style: AppTextStyles.labelMedium.copyWith(
-                    color: const Color(0xFF0D9488),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
+        SizedBox(height: 20.h),
+        // Greeting subtitle
+        Text(
+          '$greeting,',
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textMuted,
           ),
         ),
-        SizedBox(width: 10.w),
-        Image.asset(
-          AppConstants.logoPath,
-          height: 44.h,
-          fit: BoxFit.contain,
+        SizedBox(height: 2.h),
+        Text(
+          'Welcome back',
+          style: AppTextStyles.headlineLarge,
         ),
       ],
     );

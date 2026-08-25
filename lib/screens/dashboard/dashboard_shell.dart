@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../constants/app_colors.dart';
+import '../../widgets/app_drawer.dart';
 import 'widgets/bottom_nav_bar.dart';
 
 /// Shell hosting Home / Experts / Sessions / Profile with bottom nav.
@@ -21,6 +22,7 @@ class DashboardShell extends StatelessWidget {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
+        drawer: AppDrawer(navigationShell: navigationShell),
         backgroundColor: AppColors.background,
         body: navigationShell,
         bottomNavigationBar: UnTenseBottomNav(
