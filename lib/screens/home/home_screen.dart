@@ -124,7 +124,7 @@ class HomeScreen extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 128.h,
+                height: 96.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
@@ -425,20 +425,20 @@ class _HomeCounsellorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SoftCard(
       onTap: onTap,
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       child: SizedBox(
-        width: 210.w,
+        width: 235.w,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Stack(
               children: [
                 Container(
-                  width: 48.w,
-                  height: 48.w,
+                  width: 64.w,
+                  height: 64.w,
                   decoration: BoxDecoration(
                     gradient: AppColors.brandGradient,
-                    borderRadius: BorderRadius.circular(16.r),
+                    borderRadius: BorderRadius.circular(18.r),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: counsellor.profileImage.isNotEmpty
@@ -448,7 +448,7 @@ class _HomeCounsellorCard extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) => Center(
                             child: Text(
                               counsellor.fullName.characters.first,
-                              style: AppTextStyles.labelLarge.copyWith(
+                              style: AppTextStyles.headlineSmall.copyWith(
                                 color: AppColors.textOnPrimary,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -458,7 +458,7 @@ class _HomeCounsellorCard extends StatelessWidget {
                       : Center(
                           child: Text(
                             counsellor.fullName.characters.first,
-                            style: AppTextStyles.labelLarge.copyWith(
+                            style: AppTextStyles.headlineSmall.copyWith(
                               color: AppColors.textOnPrimary,
                               fontWeight: FontWeight.w700,
                             ),
@@ -470,8 +470,8 @@ class _HomeCounsellorCard extends StatelessWidget {
                     right: 0,
                     bottom: 0,
                     child: Container(
-                      width: 12.w,
-                      height: 12.w,
+                      width: 14.w,
+                      height: 14.w,
                       decoration: BoxDecoration(
                         color: AppColors.secondary,
                         shape: BoxShape.circle,
@@ -493,6 +493,7 @@ class _HomeCounsellorCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.labelMedium.copyWith(
                       fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -500,30 +501,34 @@ class _HomeCounsellorCard extends StatelessWidget {
                     counsellor.professionalTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.bodySmall,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontSize: 12.sp,
+                    ),
                   ),
                   SizedBox(height: 6.h),
                   Row(
                     children: [
                       Icon(
                         Icons.star_rounded,
-                        size: 14.sp,
+                        size: 15.sp,
                         color: const Color(0xFFF5B942),
                       ),
-                      SizedBox(width: 4.w),
+                      SizedBox(width: 3.w),
                       Text(
                         '${counsellor.rating}',
                         style: AppTextStyles.labelSmall.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
+                          fontSize: 12.sp,
                         ),
                       ),
-                      SizedBox(width: 6.w),
+                      SizedBox(width: 8.w),
                       Text(
                         '₹${counsellor.startingPrice.toInt()}',
                         style: AppTextStyles.labelSmall.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w700,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
