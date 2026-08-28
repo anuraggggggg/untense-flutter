@@ -30,6 +30,7 @@ class SessionSummary {
     required this.mode,
     required this.whenLabel,
     required this.status,
+    this.expertAvatar,
   });
 
   final String id;
@@ -38,6 +39,7 @@ class SessionSummary {
   final SessionMode mode;
   final String whenLabel;
   final SessionStatus status;
+  final String? expertAvatar;
 }
 
 enum SessionMode { chat, audio, video }

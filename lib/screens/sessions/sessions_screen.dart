@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../../constants/app_colors.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../models/dashboard_models.dart';
 import '../dashboard/widgets/dashboard_widgets.dart';
@@ -10,6 +13,30 @@ import '../dashboard/widgets/dashboard_widgets.dart';
 /// Sessions tab — upcoming and past support sessions.
 class SessionsScreen extends StatelessWidget {
   const SessionsScreen({super.key});
+
+  void _handleSessionTap(BuildContext context, SessionSummary session) {
+    if (session.mode == SessionMode.audio) {
+      context.push(
+        AppRoutes.audioCall,
+        extra: {
+          'channelName': 'session_${session.id}',
+          'userName': session.expertName,
+          'userTitle': session.role,
+          'avatarUrl': session.expertAvatar,
+        },
+      );
+    } else if (session.mode == SessionMode.video) {
+      context.push(
+        AppRoutes.videoCall,
+        extra: {
+          'channelName': 'session_${session.id}',
+          'userName': session.expertName,
+          'userTitle': session.role,
+          'avatarUrl': session.expertAvatar,
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +89,11 @@ class SessionsScreen extends StatelessWidget {
                   itemCount: upcoming.length,
                   separatorBuilder: (_, index) => SizedBox(height: 12.h),
                   itemBuilder: (context, index) {
-                    return SessionCard(session: upcoming[index])
+                    final session = upcoming[index];
+                    return SessionCard(
+                      session: session,
+                      onTap: () => _handleSessionTap(context, session),
+                    )
                         .animate()
                         .fadeIn(delay: (80 * index).ms, duration: 350.ms)
                         .slideY(

@@ -12,6 +12,8 @@ import '../../screens/sessions/sessions_screen.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/experts/counsellor_detail_screen.dart';
 import '../../screens/wallet/wallet_screen.dart';
+import '../../screens/call/audio_call_screen.dart';
+import '../../screens/call/video_call_screen.dart';
 import '../constants/app_constants.dart';
 
 /// Central GoRouter configuration for UnTense.
@@ -92,6 +94,32 @@ abstract final class AppRouter {
         path: AppRoutes.wallet,
         name: 'wallet',
         builder: (context, state) => const WalletScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.audioCall,
+        name: 'audioCall',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return AudioCallScreen(
+            channelName: extra['channelName'] ?? 'untense_audio_channel',
+            userName: extra['userName'] ?? 'Expert Counsellor',
+            userTitle: extra['userTitle'] ?? 'Mental Wellness Expert',
+            avatarUrl: extra['avatarUrl'],
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.videoCall,
+        name: 'videoCall',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return VideoCallScreen(
+            channelName: extra['channelName'] ?? 'untense_video_channel',
+            userName: extra['userName'] ?? 'Expert Counsellor',
+            userTitle: extra['userTitle'] ?? 'Mental Wellness Expert',
+            avatarUrl: extra['avatarUrl'],
+          );
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

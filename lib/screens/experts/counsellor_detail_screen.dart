@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/app_colors.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../models/counsellor.dart';
 import '../../providers/counsellor_provider.dart';
@@ -50,6 +51,30 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
+    );
+  }
+
+  void _startAudioCall(Counsellor counsellor) {
+    context.push(
+      AppRoutes.audioCall,
+      extra: {
+        'channelName': 'channel_${counsellor.id}',
+        'userName': counsellor.fullName,
+        'userTitle': counsellor.professionalTitle,
+        'avatarUrl': counsellor.profileImage,
+      },
+    );
+  }
+
+  void _startVideoCall(Counsellor counsellor) {
+    context.push(
+      AppRoutes.videoCall,
+      extra: {
+        'channelName': 'channel_${counsellor.id}',
+        'userName': counsellor.fullName,
+        'userTitle': counsellor.professionalTitle,
+        'avatarUrl': counsellor.profileImage,
+      },
     );
   }
 
@@ -278,7 +303,7 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                       icon: Icons.call_outlined,
                       title: 'Audio',
                       price: '₹${counsellor.audioPrice.toInt()}',
-                      onTap: () => _showActionFeedback('Audio Call'),
+                      onTap: () => _startAudioCall(counsellor),
                     ),
                   ),
                   SizedBox(width: 8.w),
@@ -287,7 +312,7 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                       icon: Icons.videocam_outlined,
                       title: 'Video',
                       price: '₹${counsellor.videoPrice.toInt()}',
-                      onTap: () => _showActionFeedback('Video Call'),
+                      onTap: () => _startVideoCall(counsellor),
                     ),
                   ),
                 ],

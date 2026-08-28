@@ -43,4 +43,7 @@ abstract final class AppRoutes {
   static const String wallet = '/wallet';
   static const String counsellorDetail = '/experts/:id';
   static String counsellorDetailPath(String id) => '/experts/$id';
+
+  static const String audioCall = '/audio-call';
+  static const String videoCall = '/video-call';
 }
