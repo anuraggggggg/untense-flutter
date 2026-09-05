@@ -65,7 +65,8 @@ class HomeScreen extends StatelessWidget {
                         .fadeIn(delay: 100.ms, duration: 400.ms)
                         .slideY(begin: 0.08, end: 0, delay: 100.ms),
                     SizedBox(height: 24.h),
-                    Text('How can we help?', style: AppTextStyles.headlineSmall),
+                    Text('How can we help?',
+                        style: AppTextStyles.headlineSmall),
                     SizedBox(height: 14.h),
                     Row(
                       children: [
@@ -96,9 +97,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-                    )
-                        .animate()
-                        .fadeIn(delay: 140.ms, duration: 400.ms),
+                    ).animate().fadeIn(delay: 140.ms, duration: 400.ms),
                     if (upcoming.isNotEmpty) ...[
                       SizedBox(height: 28.h),
                       SectionHeader(
@@ -193,9 +192,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
-                    .animate()
-                    .fadeIn(delay: 280.ms, duration: 400.ms),
+                ).animate().fadeIn(delay: 280.ms, duration: 400.ms),
               ),
             ),
           ],
@@ -263,7 +260,7 @@ class _HomeHeader extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    'Untensed',
+                    'Untense',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
@@ -542,4 +539,3 @@ class _HomeCounsellorCard extends StatelessWidget {
     );
   }
 }
-

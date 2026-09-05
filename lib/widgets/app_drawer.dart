@@ -75,7 +75,7 @@ class AppDrawer extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Untensed',
+                                'Untense',
                                 style: AppTextStyles.headlineSmall.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
