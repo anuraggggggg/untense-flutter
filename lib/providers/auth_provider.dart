@@ -31,6 +31,29 @@ class AuthProvider extends ChangeNotifier {
     return success;
   }
 
+  Future<RegisterResult> sendOtp({
+    required String email,
+    String purpose = 'REGISTER',
+  }) async {
+    return await _service.sendOtp(email: email, purpose: purpose);
+  }
+
+  Future<RegisterResult> registerCustomer({
+    required String fullName,
+    required String email,
+    required String password,
+    String? emailOtp,
+    String? phone,
+  }) async {
+    return await _service.registerCustomer(
+      fullName: fullName,
+      email: email,
+      password: password,
+      emailOtp: emailOtp,
+      phone: phone,
+    );
+  }
+
   Future<void> logout() async {
     _loggedIn = false;
     final prefs = await SharedPreferences.getInstance();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../screens/auth/auth_screen.dart';
+import '../../screens/auth/register_screen.dart';
 import '../../global/auth_global.dart';
 import '../../screens/dashboard/dashboard_shell.dart';
 import '../../screens/experts/experts_screen.dart';
@@ -29,12 +30,20 @@ abstract final class AppRouter {
     redirect: (context, state) {
       final isLoggedIn = authProvider.isLoggedIn;
       final location = state.matchedLocation;
-      // If not logged in, redirect to auth unless already on auth, splash, or onboarding
-      if (!isLoggedIn && location != AppRoutes.auth && location != AppRoutes.splash && location != AppRoutes.onboarding) {
+      // If not logged in, redirect to auth unless already on auth, register, splash, or onboarding
+      if (!isLoggedIn &&
+          location != AppRoutes.auth &&
+          location != AppRoutes.register &&
+          location != AppRoutes.splash &&
+          location != AppRoutes.onboarding) {
         return AppRoutes.auth;
       }
-      // If logged in and trying to access login or splash or onboarding, redirect to home
-      if (isLoggedIn && (location == AppRoutes.auth || location == AppRoutes.splash || location == AppRoutes.onboarding)) {
+      // If logged in and trying to access login, register, splash or onboarding, redirect to home
+      if (isLoggedIn &&
+          (location == AppRoutes.auth ||
+              location == AppRoutes.register ||
+              location == AppRoutes.splash ||
+              location == AppRoutes.onboarding)) {
         return AppRoutes.home;
       }
       return null;
@@ -68,6 +77,26 @@ abstract final class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const AuthScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final offset = Tween<Offset>(
+              begin: const Offset(0, 0.04),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            );
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(position: offset, child: child),
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.register,
+        name: 'register',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RegisterScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             final offset = Tween<Offset>(
               begin: const Offset(0, 0.04),

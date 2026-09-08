@@ -95,6 +95,8 @@ abstract final class AppTextStyles {
         color: AppColors.textMuted,
       );
 
+  static TextStyle get caption => labelSmall;
+
   static TextStyle get button => GoogleFonts.plusJakartaSans(
         fontSize: 16,
         fontWeight: FontWeight.w600,
