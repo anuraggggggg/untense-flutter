@@ -105,8 +105,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isSendingOtp = true;
     });
 
+    final phone = _phoneController.text.trim();
     final authProvider = context.read<AuthProvider>();
-    final result = await authProvider.sendOtp(email: email, purpose: 'REGISTER');
+    final result = await authProvider.sendOtp(
+      email: email,
+      purpose: 'CUSTOMER_REGISTRATION',
+      mobile: phone.isNotEmpty ? phone : null,
+    );
 
     if (!mounted) return;
 
@@ -185,17 +190,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {
         _successMessage = result.message.isNotEmpty
             ? result.message
-            : 'Registration successful! Redirecting to Log In...';
+            : 'Registration successful!';
       });
 
       AppNotifications.showSuccessSnackBar(
         context,
-        'Account created successfully! Redirecting to sign in...',
+        'Account created successfully! Welcome to UnTense.',
       );
 
-      await Future.delayed(const Duration(milliseconds: 1400));
+      await Future.delayed(const Duration(milliseconds: 1200));
       if (!mounted) return;
-      context.go(AppRoutes.auth);
+      context.go(AppRoutes.home);
     } else {
       setState(() {
         _errorMessage = result.message;
