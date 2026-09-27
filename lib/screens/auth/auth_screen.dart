@@ -20,7 +20,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _emailController =
-      TextEditingController(text: 'user@gmail.com');
+      TextEditingController(text: 'shayanmohd463@gmail.com');
   final TextEditingController _passwordController =
       TextEditingController(text: 'admin@123');
   bool _isLoading = false;
@@ -45,6 +45,93 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
+  void _showRoleRestrictionDialog(BuildContext context, String role) {
+    final formattedRole = role.toUpperCase();
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+          child: Container(
+            padding: EdgeInsets.all(24.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(28.r),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.14),
+                  blurRadius: 32,
+                  offset: const Offset(0, 16),
+                ),
+              ],
+              border: Border.all(
+                color: AppColors.error.withValues(alpha: 0.25),
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64.r,
+                  height: 64.r,
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.admin_panel_settings_rounded,
+                    color: AppColors.error,
+                    size: 32.sp,
+                  ),
+                ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
+                SizedBox(height: 16.h),
+                Text(
+                  'Access Restricted',
+                  style: AppTextStyles.headlineSmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8.h),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    'Role: $formattedRole',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.error,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                Text(
+                  'This mobile application is strictly reserved for Customer accounts.\n\nAs an $formattedRole user, please sign in via the official UnTense Web Portal.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                SoftButton(
+                  label: 'Understood',
+                  onPressed: () => Navigator.of(ctx).pop(),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 250.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), curve: Curves.easeOutCubic),
+        );
+      },
+    );
+  }
+
   Future<void> _handleLogin() async {
     FocusScope.of(context).unfocus();
     setState(() {
@@ -53,7 +140,7 @@ class _AuthScreenState extends State<AuthScreen> {
     });
 
     final auth = context.read<AuthProvider>();
-    final success = await auth.login(
+    final result = await auth.login(
       _emailController.text.trim(),
       _passwordController.text.trim(),
     );
@@ -64,12 +151,19 @@ class _AuthScreenState extends State<AuthScreen> {
       _isLoading = false;
     });
 
-    if (success) {
+    if (result.success) {
       context.go(AppRoutes.home);
+    } else if (result.isCustomerOnlyViolation) {
+      AppNotifications.showErrorSnackBar(
+        context,
+        'Access Restricted: Mobile app is for Customers only (${result.role} role not allowed).',
+      );
+      _showRoleRestrictionDialog(context, result.role ?? 'ADMIN');
     } else {
       setState(() {
-        _errorMessage = 'Invalid email or password. Please try again.';
+        _errorMessage = result.message;
       });
+      AppNotifications.showErrorSnackBar(context, result.message);
     }
   }
 

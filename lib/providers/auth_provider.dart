@@ -20,15 +20,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password) async {
-    final success = await _service.login(email, password);
-    if (success) {
+  Future<LoginResult> login(String email, String password) async {
+    final result = await _service.login(email, password);
+    if (result.success) {
       _loggedIn = true;
+      this.email = email;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_prefsKey, true);
       notifyListeners();
     }
-    return success;
+    return result;
   }
 
   Future<RegisterResult> sendOtp({

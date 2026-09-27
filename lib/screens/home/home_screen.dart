@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 0),
+                padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 120.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

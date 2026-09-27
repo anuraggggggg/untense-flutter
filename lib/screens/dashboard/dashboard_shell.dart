@@ -20,6 +20,8 @@ class DashboardShell extends StatelessWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
       ),
       child: Scaffold(
         drawer: AppDrawer(navigationShell: navigationShell),

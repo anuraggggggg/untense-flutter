@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -106,6 +107,55 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
     );
   }
 
+  Widget _buildAvatarImage(Counsellor counsellor) {
+    final img = counsellor.profileImage;
+    final initial = counsellor.fullName.isNotEmpty
+        ? counsellor.fullName.characters.first
+        : 'C';
+
+    if (img.isEmpty) {
+      return Center(
+        child: Text(
+          initial,
+          style: AppTextStyles.displayMedium.copyWith(
+            color: AppColors.textOnPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    }
+
+    if (img.contains('/svg') || img.endsWith('.svg')) {
+      return SvgPicture.network(
+        img,
+        fit: BoxFit.cover,
+        placeholderBuilder: (_) => Center(
+          child: Text(
+            initial,
+            style: AppTextStyles.displayMedium.copyWith(
+              color: AppColors.textOnPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Image.network(
+      img,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Center(
+        child: Text(
+          initial,
+          style: AppTextStyles.displayMedium.copyWith(
+            color: AppColors.textOnPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildProfileContent(Counsellor counsellor) {
     return AmbientBackground(
       child: SafeArea(
@@ -132,32 +182,7 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                               borderRadius: BorderRadius.circular(28.r),
                             ),
                             clipBehavior: Clip.antiAlias,
-                            child: counsellor.profileImage.isNotEmpty
-                                ? Image.network(
-                                    counsellor.profileImage,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Center(
-                                      child: Text(
-                                        counsellor.fullName.characters.first,
-                                        style: AppTextStyles.displayMedium
-                                            .copyWith(
-                                          color: AppColors.textOnPrimary,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Center(
-                                    child: Text(
-                                      counsellor.fullName.characters.first,
-                                      style:
-                                          AppTextStyles.displayMedium.copyWith(
-                                        color: AppColors.textOnPrimary,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
+                            child: _buildAvatarImage(counsellor),
                           ),
                           if (counsellor.availableNow)
                             Positioned(

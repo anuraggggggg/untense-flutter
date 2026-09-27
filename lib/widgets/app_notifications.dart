@@ -198,6 +198,44 @@ abstract final class AppNotifications {
     );
   }
 
+  /// Show professional error snackbar
+  static void showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: const BoxDecoration(
+                color: Colors.white24,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.error_outline_rounded, color: Colors.white, size: 18.sp),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Text(
+                message,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(16.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
   /// Show professional info / info snackbar
   static void showInfoSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();

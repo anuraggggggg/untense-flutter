@@ -54,45 +54,48 @@ class UnTenseBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final current = navigationShell.currentIndex;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(28.r),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.10),
-              blurRadius: 28,
-              offset: const Offset(0, 12),
-            ),
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
-          child: Row(
-            children: [
-              for (var i = 0; i < _items.length; i++)
-                Expanded(
-                  child: _NavTile(
-                    item: _items[i],
-                    selected: current == i,
-                    onTap: () => _onTap(i),
-                  ),
-                ),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(28.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.10),
+                blurRadius: 28,
+                offset: const Offset(0, 12),
+              ),
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+            child: Row(
+              children: [
+                for (var i = 0; i < _items.length; i++)
+                  Expanded(
+                    child: _NavTile(
+                      item: _items[i],
+                      selected: current == i,
+                      onTap: () => _onTap(i),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
-    )
-        .animate()
-        .fadeIn(duration: 400.ms)
-        .slideY(begin: 0.2, end: 0, duration: 450.ms, curve: Curves.easeOutCubic);
+      )
+          .animate()
+          .fadeIn(duration: 400.ms)
+          .slideY(begin: 0.2, end: 0, duration: 450.ms, curve: Curves.easeOutCubic),
+    );
   }
 }
 

@@ -44,13 +44,14 @@ class UnTenseApp extends StatelessWidget {
         designSize: const Size(390, 844),
         minTextAdapt: true,
         splitScreenMode: true,
-        builder: (context, child) => child!,
-        child: MaterialApp.router(
-          title: 'UnTense',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light,
-          routerConfig: AppRouter.router,
-        ),
+        builder: (context, child) {
+          return MaterialApp.router(
+            title: 'UnTense',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            routerConfig: AppRouter.router,
+          );
+        },
       ),
     );
   }

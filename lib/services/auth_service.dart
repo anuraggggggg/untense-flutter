@@ -104,8 +104,26 @@ class RegisterResult {
   }
 }
 
+class LoginResult {
+  final bool success;
+  final String message;
+  final String? role;
+  final bool isCustomerOnlyViolation;
+  final String? token;
+  final dynamic userData;
+
+  LoginResult({
+    required this.success,
+    required this.message,
+    this.role,
+    this.isCustomerOnlyViolation = false,
+    this.token,
+    this.userData,
+  });
+}
+
 class AuthService {
-  Future<bool> login(String email, String password) async {
+  Future<LoginResult> login(String email, String password) async {
     final url = '${ApiEndpoints.baseUrl}${ApiEndpoints.login}';
     final payload = {
       'email': email,
@@ -140,22 +158,56 @@ class AuthService {
       final bool success = (response.statusCode >= 200 && response.statusCode < 300) &&
           (data['success'] == true);
 
-      if (success) {
-        final token = data['data']?['token']?.toString();
-        if (token != null && token.isNotEmpty) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('auth_token', token);
-        }
+      if (!success) {
+        return LoginResult(
+          success: false,
+          message: data['message']?.toString() ?? 'Invalid email or password. Please try again.',
+        );
       }
 
-      return success;
+      final userData = data['data']?['user'] ?? data['user'];
+      final String? role = userData?['role']?.toString();
+      final token = data['data']?['token']?.toString() ??
+          data['token']?.toString() ??
+          data['accessToken']?.toString() ??
+          data['data']?['accessToken']?.toString();
+
+      // Enforce role restriction: Mobile app is for CUSTOMER only
+      if (role != null && role.isNotEmpty && role.toUpperCase() != 'CUSTOMER') {
+        AppLogger.logError(
+          message: 'Access restricted for role "$role" ($email). Mobile app is strictly for CUSTOMER role.',
+        );
+        return LoginResult(
+          success: false,
+          role: role,
+          isCustomerOnlyViolation: true,
+          message: 'Access Restricted: This mobile app is for Customers only. $role accounts must use the web portal.',
+        );
+      }
+
+      if (token != null && token.isNotEmpty) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        AppLogger.logToken(token);
+      }
+
+      return LoginResult(
+        success: true,
+        message: 'Logged in successfully',
+        role: role ?? 'CUSTOMER',
+        token: token,
+        userData: userData,
+      );
     } catch (e, stackTrace) {
       AppLogger.logError(
         message: 'Login failed for $email',
         error: e,
         stackTrace: stackTrace,
       );
-      return false;
+      return LoginResult(
+        success: false,
+        message: 'Unable to connect to server. Please try again later.',
+      );
     }
   }
 
@@ -326,11 +378,23 @@ class AuthService {
 
       final Map<String, dynamic> data = jsonDecode(response.body);
 
+      final token = data['data']?['token']?.toString() ??
+          data['token']?.toString() ??
+          data['accessToken']?.toString() ??
+          data['data']?['accessToken']?.toString();
+
+      if (token != null && token.isNotEmpty) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        AppLogger.logToken(token);
+      }
+
       AppLogger.logResponse(
         method: 'POST',
         url: url,
         statusCode: response.statusCode,
         body: data,
+        token: token,
       );
 
       return RegisterResult.fromApiResponse(data, response.statusCode);
@@ -452,7 +516,14 @@ class AuthService {
     }
   }
 
+  static Future<String?> getAuthToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
+
   Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
     AppLogger.logRequest(
       method: 'POST',
       url: '${ApiEndpoints.baseUrl}${ApiEndpoints.logout}',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
 import '../models/counsellor.dart';
@@ -14,6 +15,55 @@ class CounsellorCard extends StatelessWidget {
 
   final Counsellor counsellor;
   final VoidCallback onViewProfile;
+
+  Widget _buildAvatar() {
+    final img = counsellor.profileImage;
+    final initial = counsellor.fullName.isNotEmpty
+        ? counsellor.fullName.characters.first
+        : 'C';
+
+    if (img.isEmpty) {
+      return Center(
+        child: Text(
+          initial,
+          style: AppTextStyles.headlineSmall.copyWith(
+            color: AppColors.textOnPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    }
+
+    if (img.contains('/svg') || img.endsWith('.svg')) {
+      return SvgPicture.network(
+        img,
+        fit: BoxFit.cover,
+        placeholderBuilder: (_) => Center(
+          child: Text(
+            initial,
+            style: AppTextStyles.headlineSmall.copyWith(
+              color: AppColors.textOnPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Image.network(
+      img,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Center(
+        child: Text(
+          initial,
+          style: AppTextStyles.headlineSmall.copyWith(
+            color: AppColors.textOnPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,30 +87,7 @@ class CounsellorCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(18.r),
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: counsellor.profileImage.isNotEmpty
-                        ? Image.network(
-                            counsellor.profileImage,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Center(
-                              child: Text(
-                                counsellor.fullName.characters.first,
-                                style: AppTextStyles.headlineSmall.copyWith(
-                                  color: AppColors.textOnPrimary,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Center(
-                            child: Text(
-                              counsellor.fullName.characters.first,
-                              style: AppTextStyles.headlineSmall.copyWith(
-                                color: AppColors.textOnPrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
+                    child: _buildAvatar(),
                   ),
                   if (counsellor.availableNow)
                     Positioned(
