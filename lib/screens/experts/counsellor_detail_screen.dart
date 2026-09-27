@@ -12,6 +12,8 @@ import '../../models/counsellor.dart';
 import '../../providers/counsellor_provider.dart';
 import '../../widgets/common_widgets.dart';
 
+import '../../services/counsellor_service.dart';
+
 class CounsellorDetailScreen extends StatefulWidget {
   const CounsellorDetailScreen({
     super.key,
@@ -45,17 +47,32 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
     }
   }
 
-  void _showActionFeedback(String mode) {
+  Future<void> _startChat(Counsellor counsellor) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$mode booking will be available soon'),
-        behavior: SnackBarBehavior.floating,
+        content: Text('Sending chat request to ${counsellor.fullName}...'),
         duration: const Duration(seconds: 2),
       ),
     );
+    await CounsellorService().sendChatRequest(
+      counsellor.id,
+      counsellorName: counsellor.fullName,
+    );
   }
 
-  void _startAudioCall(Counsellor counsellor) {
+  Future<void> _startAudioCall(Counsellor counsellor) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Sending audio call request to ${counsellor.fullName}...'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+    await CounsellorService().sendAudioCallRequest(
+      counsellor.id,
+      counsellorName: counsellor.fullName,
+    );
+
+    if (!mounted) return;
     context.push(
       AppRoutes.audioCall,
       extra: {
@@ -67,7 +84,19 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
     );
   }
 
-  void _startVideoCall(Counsellor counsellor) {
+  Future<void> _startVideoCall(Counsellor counsellor) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Sending video call request to ${counsellor.fullName}...'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+    await CounsellorService().sendVideoCallRequest(
+      counsellor.id,
+      counsellorName: counsellor.fullName,
+    );
+
+    if (!mounted) return;
     context.push(
       AppRoutes.videoCall,
       extra: {
@@ -319,7 +348,7 @@ class _CounsellorDetailScreenState extends State<CounsellorDetailScreen> {
                       icon: Icons.chat_bubble_outline_rounded,
                       title: 'Chat',
                       price: '₹${counsellor.chatPrice.toInt()}',
-                      onTap: () => _showActionFeedback('Chat'),
+                      onTap: () => _startChat(counsellor),
                     ),
                   ),
                   SizedBox(width: 8.w),
