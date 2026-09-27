@@ -22,46 +22,32 @@ class CounsellorCard extends StatelessWidget {
         ? counsellor.fullName.characters.first
         : 'C';
 
-    if (img.isEmpty) {
-      return Center(
-        child: Text(
-          initial,
-          style: AppTextStyles.headlineSmall.copyWith(
-            color: AppColors.textOnPrimary,
-            fontWeight: FontWeight.w700,
-          ),
+    final fallbackWidget = Center(
+      child: Text(
+        initial,
+        style: AppTextStyles.headlineSmall.copyWith(
+          color: AppColors.textOnPrimary,
+          fontWeight: FontWeight.w700,
         ),
-      );
+      ),
+    );
+
+    if (img.isEmpty || !img.startsWith('http')) {
+      return fallbackWidget;
     }
 
     if (img.contains('/svg') || img.endsWith('.svg')) {
       return SvgPicture.network(
         img,
         fit: BoxFit.cover,
-        placeholderBuilder: (_) => Center(
-          child: Text(
-            initial,
-            style: AppTextStyles.headlineSmall.copyWith(
-              color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
+        placeholderBuilder: (_) => fallbackWidget,
       );
     }
 
     return Image.network(
       img,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Center(
-        child: Text(
-          initial,
-          style: AppTextStyles.headlineSmall.copyWith(
-            color: AppColors.textOnPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
+      errorBuilder: (context, error, stackTrace) => fallbackWidget,
     );
   }
 

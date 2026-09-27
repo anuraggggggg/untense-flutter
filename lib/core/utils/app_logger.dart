@@ -72,6 +72,28 @@ abstract final class AppLogger {
     debugPrint('$_magenta$_bold🔑 ==================================================== 🔑$_reset');
   }
 
+  /// Explicitly print notification dispatch in terminal
+  static void logNotification({
+    required String action,
+    required String counsellorName,
+    required String counsellorId,
+    required String notificationType,
+    Map<String, dynamic>? payload,
+  }) {
+    if (!kDebugMode) return;
+    final timestamp = DateTime.now().toIso8601String().split('T').last;
+
+    debugPrint('');
+    debugPrint('$_yellow$_bold================ [NOTIFICATION DISPATCH] ================$_reset');
+    debugPrint('$_yellow[$timestamp] 🔔 Action: $action$_reset');
+    debugPrint('$_yellow Recipient Counsellor : $counsellorName (ID: $counsellorId)$_reset');
+    debugPrint('$_yellow Notification Type   : $notificationType$_reset');
+    if (payload != null && payload.isNotEmpty) {
+      debugPrint('$_yellow Payload             : ${_prettyJson(payload)}$_reset');
+    }
+    debugPrint('$_yellow==========================================================$_reset');
+  }
+
   /// Log API or Application Error
   static void logError({
     required String message,

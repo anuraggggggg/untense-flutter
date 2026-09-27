@@ -28,6 +28,9 @@ abstract final class ApiEndpoints {
   static const String counsellorFollowers = '/counsellors/me/followers';
   static String counsellorSlots(String id) => '/counsellors/$id/slots';
   static String counsellorFollow(String id) => '/counsellors/$id/follow';
+  static String counsellorChatRequest(String id) => '/counsellors/$id/chat-request';
+  static String counsellorAudioCallRequest(String id) => '/counsellors/$id/audio-call-request';
+  static String counsellorVideoCallRequest(String id) => '/counsellors/$id/video-call-request';
 
   // ── Category Endpoints ─────────────────────────────────────
   static const String categories = '/categories';
